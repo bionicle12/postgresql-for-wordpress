@@ -287,17 +287,17 @@ function pg4wp_rewrite($sql)
         }
 
         // Ensure that ORDER BY column appears in SELECT DISTINCT fields
-        $pattern = '/^SELECT DISTINCT.*ORDER BY\s+(\S+)/';
+        $pattern = '/SELECT DISTINCT.*ORDER BY\s+(\S+)/s';
         if (
             preg_match($pattern, $sql, $matches)
             && strpos($sql, $matches[1]) > strpos($sql, 'ORDER BY')
             && false === strpos($sql, '*')
         ) {
             if (false !== strpos($sql, 'GROUP BY')) {
-                $pattern = '/ FROM /';
+                $pattern = '/\sFROM\s/';
                 $sql = preg_replace($pattern, ', MIN(' . $matches[1] . ') AS ' . $matches[1] . ' FROM ', $sql, 1);
             } else {
-                $pattern = '/ FROM /';
+                $pattern = '/\sFROM\s/';
                 $sql = preg_replace($pattern, ', ' . $matches[1] . ' FROM ', $sql, 1);
             }
         }
